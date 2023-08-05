@@ -1,9 +1,25 @@
 import React from "react";
 import { Button, Table } from "react-bootstrap";
+import { useState } from "react";
+import FormModal from "../components/Modal";
 
 const CrudPage = () => {
+  const [showModal, setShowModal] = useState(false);
+
+  const handleClose = () => {
+    setShowModal(false);
+  };
+
   return (
-    <div>
+    <div className="px-3">
+      <FormModal show={showModal} handleClose={handleClose} />
+      <Button
+        onClick={() => setShowModal(true)}
+        variant="success"
+        className="my-3"
+      >
+        Add New Task
+      </Button>
       <Table variant="dark" hover bordered striped>
         <thead>
           <tr>
