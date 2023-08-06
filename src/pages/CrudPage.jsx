@@ -1,18 +1,31 @@
 import React from "react";
-import { Button, Table } from "react-bootstrap";
+import { Button, ButtonGroup, Table } from "react-bootstrap";
 import { useState } from "react";
 import FormModal from "../components/Modal";
+import { useSelector, useDispatch } from "react-redux";
+import { removeTask } from "../app/crudSlice";
 
 const CrudPage = () => {
+  const state = useSelector((store) => store.crudReducer);
+
   const [showModal, setShowModal] = useState(false);
 
+  const [editTask, setEditTask] = useState(null);
+
   const handleClose = () => {
+    setEditTask(null);
     setShowModal(false);
   };
 
+  const dispatch = useDispatch();
+
   return (
     <div className="px-3">
-      <FormModal show={showModal} handleClose={handleClose} />
+      <FormModal
+        editTask={editTask}
+        show={showModal}
+        handleClose={handleClose}
+      />
       <Button
         onClick={() => setShowModal(true)}
         variant="success"
@@ -23,7 +36,7 @@ const CrudPage = () => {
       <Table variant="dark" hover bordered striped>
         <thead>
           <tr>
-            <th>id</th>
+            <th>No</th>
             <th>Task</th>
             <th>Author</th>
             <th>Assigned</th>
@@ -32,16 +45,33 @@ const CrudPage = () => {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>01</td>
-            <td>Editing Navbar</td>
-            <td>Mehmet</td>
-            <td>Samet</td>
-            <td>05/01/2023</td>
-            <td>
-              <Button variant="danger">Delete</Button>
-            </td>
-          </tr>
+          {state.tasks.map((task, i) => (
+            <tr key={task.id}>
+              <td>{i + 1}</td>
+              <td>{task.title}</td>
+              <td>{task.author}</td>
+              <td>{task.assigned_to}</td>
+              <td>{task.deadline}</td>
+              <td>
+                <ButtonGroup>
+                  <Button
+                    onClick={() => dispatch(removeTask(task.id))}
+                    variant="danger"
+                  >
+                    Delete
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setEditTask(task);
+                      setShowModal(true);
+                    }}
+                  >
+                    Edit
+                  </Button>
+                </ButtonGroup>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </Table>
     </div>
